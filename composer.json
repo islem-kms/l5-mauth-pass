@@ -10,6 +10,12 @@
             "email": "khemissi.islem@gmail.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "path",
+            "url": "https://github.com/islem-kms/l5-mauth-pass.git"
+        }
+    ],
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.0",
