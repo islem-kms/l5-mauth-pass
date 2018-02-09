@@ -16,6 +16,8 @@
             "url": "https://github.com/islem-kms/l5-mauth-pass.git"
         }
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": ">=7.0",
         "laravel/passport": "^3.0"
