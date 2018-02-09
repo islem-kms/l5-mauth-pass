@@ -1,0 +1,43 @@
+{
+    "name": "islem-kms/l5-mauth-pass",
+    "description": "A",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["laravel", "passport", "multi-auth"],
+    "authors": [
+        {
+            "name": "Islem Khemissi",
+            "email": "khemissi.islem@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "laravel/passport": "^3.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "~3.5",
+        "mockery/mockery": "^1.0",
+        "orchestra/database": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "IslemKms\\PassportMultiauth\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "files": [
+            "tests/TestCase.php"
+        ],
+        "psr-4": {
+            "IslemKms\\PassportMultiauth\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "IslemKms\\PassportMultiauth\\Providers\\MultiauthServiceProvider"
+            ]
+        }
+    }
+
+}
