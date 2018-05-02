@@ -7,10 +7,15 @@ use Illuminate\Http\Request;
 
 class GuardChecker
 {
-    public static function getAuthGuards(Request $request): array
+    /**
+     * Get guards passed as parameters to `auth` middleware.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return array
+     */
+    public static function getAuthGuards(Request $request)
     {
         $middlewares = $request->route()->middleware();
-
         $guards = [];
         foreach ($middlewares as $middleware) {
             if (Str::startsWith($middleware, 'auth')) {
@@ -18,11 +23,15 @@ class GuardChecker
                 $guards = array_unique(array_merge($guards, $explodedGuards));
             }
         }
-
         return $guards;
     }
-
-    public static function defaultGuardProvider(string $guard)
+    /**
+     * Get default provider from guard.
+     *
+     * @param  string $guard
+     * @return string|null
+     */
+    public static function defaultGuardProvider($guard)
     {
         return config('auth.guards.'.$guard.'.provider');
     }

@@ -4,7 +4,6 @@ namespace IslemKms\PassportMultiauth\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use League\OAuth2\Server\ResourceServer;
 use Illuminate\Auth\CreatesUserProviders;
@@ -18,10 +17,19 @@ class ConfigAccessTokenCustomProvider
 {
     use CreatesUserProviders;
 
+    /**
+     * The application instance.
+     *
+     * @var \Illuminate\Foundation\Application
+     */
     private $app;
-
+    /**
+     * @var \League\OAuth2\Server\ResourceServer
+     */
     private $server;
-
+    /**
+     * @var \IslemKms\PassportMultiauth\ProviderRepository
+     */
     private $providers;
 
     public function __construct(ResourceServer $server, ProviderRepository $providers, App $app)
@@ -43,7 +51,7 @@ class ConfigAccessTokenCustomProvider
         // Get the auth guard if has to check the default guard
         $guards = GuardChecker::getAuthGuards($request);
 
-        // If don't has any guard follow the flo
+        // If don't has any guard follow the flow
         if (count($guards) == 0) {
             return $next($request);
         }
@@ -70,14 +78,12 @@ class ConfigAccessTokenCustomProvider
                 $psr->getAttribute('oauth_user_id')
             );
 
-            // If just one entity a register with this id follow the flow
-            if (! ($entities->count() > 1)) {
-                return $next($request);
-            }
-
-            if (count($guards) > 1) {
-                // If has more than one guards set the api provider used to
-                // choose provider on \Laravel\Passport\Bridge\UserRepository::getUserEntityByUserCredentials.
+            // If just one entity has a register with this id or
+            // has more than one guard set the api guard provider follow the flow
+            if ($entities->count() == 1 || count($guards) > 1) {
+                // If has more than one guards or just one entity with same id set
+                // the api provider used to choose provider on
+                // \Laravel\Passport\Bridge\UserRepository::getUserEntityByUserCredentials.
                 config(['auth.guards.api.provider' => $accessToken->provider]);
 
                 return $next($request);
@@ -95,7 +101,13 @@ class ConfigAccessTokenCustomProvider
         return $next($request);
     }
 
-    public function entitiesWithSameIdOnProviders($id): Collection
+    /**
+     * Get entities stored on database with same id on auth providers.
+     *
+     * @param  string|int $id
+     * @return \Illuminate\Support\Collection
+     */
+    public function entitiesWithSameIdOnProviders($id)
     {
         $providers = array_keys(config('auth.providers'));
 
@@ -110,6 +122,13 @@ class ConfigAccessTokenCustomProvider
         return $entities;
     }
 
+    /**
+     * Find entity by id on auth provider.
+     *
+     * @param  string $provider
+     * @param  string|int $userId
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
     public function findEntityOnProvider($provider, $userId)
     {
         $userProvider = $this->createUserProvider($provider);
